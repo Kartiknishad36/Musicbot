@@ -23,9 +23,9 @@
 import asyncio
 import random
 import time
-from typing import Dict, List, Optional, Set
+from typing import Dict, List
 
-from pyrogram import enums, filters, types
+from pyrogram import filters, types
 from pyrogram.errors import (
     ChatWriteForbidden,
     FloodWait,
@@ -36,7 +36,7 @@ from pyrogram.errors import (
     UserNotParticipant,
 )
 
-from HasiiMusic import app, config, db
+from HasiiMusic import app, config, db, lang
 from HasiiMusic.helpers import buttons
 from HasiiMusic.helpers._admins import admin_check
 
@@ -177,7 +177,6 @@ async def _run_tag_process(
 
     success = 0
     failed = 0
-    skipped = 0
 
     for idx, user in enumerate(members, 1):
         if _is_cancelled(chat_id):
@@ -259,7 +258,6 @@ def _start_tag_task(chat_id: int, initiator_id: int, text: str, mode: str, delay
 
 @app.on_message(filters.command(["tagall", "all", "tag"]) & filters.group & ~app.bl_users)
 @admin_check
-@lang.language()
 async def tagall_cmd(_, message: types.Message):
     """ /tagall | /all | /tag [optional text] """
     try:
@@ -285,7 +283,6 @@ async def tagall_cmd(_, message: types.Message):
 
 @app.on_message(filters.command(["tagspam"]) & filters.group & ~app.bl_users)
 @admin_check
-@lang.language()
 async def tagspam_cmd(_, message: types.Message):
     """Fast spam-style tagging."""
     try:
@@ -303,7 +300,6 @@ async def tagspam_cmd(_, message: types.Message):
 
 @app.on_message(filters.command(["tagbomb", "bomb"]) & filters.group & ~app.bl_users)
 @admin_check
-@lang.language()
 async def tagbomb_cmd(_, message: types.Message):
     """Ultra-fast bomb tagging (short messages)."""
     try:
@@ -320,7 +316,6 @@ async def tagbomb_cmd(_, message: types.Message):
 
 @app.on_message(filters.command(["taggaali", "gaali"]) & filters.group & ~app.bl_users)
 @admin_check
-@lang.language()
 async def taggaali_cmd(_, message: types.Message):
     """Random mild roast / gaali style tagging."""
     try:
@@ -337,7 +332,6 @@ async def taggaali_cmd(_, message: types.Message):
 
 @app.on_message(filters.command(["tagstop", "tagcancel", "stoptag", "canceltag"]) & filters.group & ~app.bl_users)
 @admin_check
-@lang.language()
 async def tagstop_cmd(_, message: types.Message):
     """Immediately cancel any running tag process."""
     try:
@@ -400,7 +394,6 @@ async def tag_resume_cb(_, query: types.CallbackQuery):
 
 # Help callback for tag section (linked from help menu)
 @app.on_callback_query(filters.regex(r"^help_tag$"))
-@lang.language()
 async def help_tag_cb(_, query: types.CallbackQuery):
     text = (
         f"🌺 <b>✨ ᴛᴀɴᴜ ᴍᴜꜱɪᴄ ᴛᴀɢ ᴘᴏᴡᴇʀ ᴇᴅɪᴛɪᴏɴ ✨</b> 🌺\n\n"
@@ -420,6 +413,6 @@ async def help_tag_cb(_, query: types.CallbackQuery):
     )
     await query.message.edit_text(
         text,
-        reply_markup=buttons.help_markup(query.message.lang if hasattr(query.message, "lang") else {}, back=True),
+        reply_markup=buttons.help_markup({}, back=True),
     )
     await query.answer()
