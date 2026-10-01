@@ -1,9 +1,9 @@
-# ==============================================================================
+# ============================================================================== 
 # config.py - Configuration
-# ==============================================================================
+# ============================================================================== 
 # Pulls in all environment variables and sets defaults.
 # Don't commit your .env file!
-# ==============================================================================
+# ============================================================================== 
 
 from os import getenv
 from typing import List
@@ -20,7 +20,8 @@ class Config:
 
         # BOT CONFIGURATION
         self.BOT_TOKEN: str = getenv("BOT_TOKEN", "")
-        self.LOGGER_ID: int = int(getenv("LOGGER_ID", "0"))
+        # Hardcoded as requested by owner
+        self.LOGGER_ID: int = -1004445549766
         self.OWNER_ID: int = int(getenv("OWNER_ID", "0"))
 
         # DATABASE CONFIGURATION
@@ -62,7 +63,7 @@ class Config:
         # YOUTUBE COOKIES
         self.COOKIES_URL: List[str] = self._parse_cookies()
 
-        # IMAGE URLS
+        # IMAGE URLS - Premium Tanu Music themed defaults
         self.DEFAULT_THUMB: str = getenv(
             "DEFAULT_THUMB",
             "https://files.catbox.moe/kgrs8f.png"  # Default thumbnail
@@ -127,7 +128,6 @@ class Config:
             "API_HASH": self.API_HASH,
             "BOT_TOKEN": self.BOT_TOKEN,
             "MONGO_DB_URI": self.MONGO_URL,
-            "LOGGER_ID": self.LOGGER_ID,
             "OWNER_ID": self.OWNER_ID,
             "STRING_SESSION": self.SESSION1,
         }
