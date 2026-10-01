@@ -1,8 +1,8 @@
 # ============================================================================== 
 # _inline.py - Premium Keyboard Buttons
 # ============================================================================== 
-# Helper methods to generate all the inline keyboards (play controls, help menus, etc).
-# Premium multi-color emoji style for bright, colorful button look.
+# Telegram Bot API cannot paint real green/red button backgrounds.
+# Layout matches the Mahi Music Clone screenshot as closely as possible.
 # ============================================================================== 
 
 from pyrogram import types
@@ -39,7 +39,6 @@ class Inline:
             )
 
         if not remove:
-            # Seek buttons row - different colors
             keyboard.append(
                 [
                     self.ikb(
@@ -52,11 +51,10 @@ class Inline:
                         text="🔵 30 »", callback_data=f"controls seek_forward_30 {chat_id}"),
                 ]
             )
-            # Main control buttons row - premium colorful
             keyboard.append(
                 [
                     self.ikb(
-                        text="🟣 ⏸️" if is_playing else "🟢 ▶️", 
+                        text="🟣 ⏸️" if is_playing else "🟢 ▶️",
                         callback_data=f"controls {'pause' if is_playing else 'resume'} {chat_id}"
                     ),
                     self.ikb(
@@ -69,7 +67,6 @@ class Inline:
                         text="🔴 ⏹️", callback_data=f"controls stop {chat_id}"),
                 ]
             )
-            # Delete button as full-width button at bottom
             keyboard.append(
                 [
                     self.ikb(
@@ -88,7 +85,6 @@ class Inline:
                 ]
             ]
         else:
-            # Help menu with categorized buttons (3 per row) - colorful premium
             rows = [
                 [
                     self.ikb(text="🔴 ᴀᴅᴍɪɴꜱ", callback_data="help_admins"),
@@ -112,13 +108,13 @@ class Inline:
                 ],
                 [
                     self.ikb(text="🌺 ᴛᴀɢ", callback_data="help_tag"),
+                    self.ikb(text="🔄 ᴀᴜᴛᴏᴘʟᴀʏ", callback_data="help_autoplay"),
                 ],
                 [
                     self.ikb(text="🔙 ʙᴀᴄᴋ", callback_data="start"),
                 ]
             ]
         return self.ikm(rows)
-
 
     def ping_markup(self, text: str) -> types.InlineKeyboardMarkup:
         return self.ikm([
@@ -137,18 +133,13 @@ class Inline:
         return self.ikm(
             [
                 [
-                    self.ikb(
-                        text="🟢 ▶️", callback_data=f"controls resume {chat_id}"),
-                    self.ikb(
-                        text="🟣 ⏸️", callback_data=f"controls pause {chat_id}"),
-                    self.ikb(
-                        text="🔵 ⏭️", callback_data=f"controls skip {chat_id}"),
-                    self.ikb(
-                        text="🔴 ⏹️", callback_data=f"controls stop {chat_id}"),
+                    self.ikb(text="🟢 ▶️", callback_data=f"controls resume {chat_id}"),
+                    self.ikb(text="🟣 ⏸️", callback_data=f"controls pause {chat_id}"),
+                    self.ikb(text="🔵 ⏭️", callback_data=f"controls skip {chat_id}"),
+                    self.ikb(text="🔴 ⏹️", callback_data=f"controls stop {chat_id}"),
                 ],
                 [
-                    self.ikb(
-                        text="🗑️ ᴅᴇʟᴇᴛᴇ", callback_data=f"controls close {chat_id}"),
+                    self.ikb(text="🗑️ ᴅᴇʟᴇᴛᴇ", callback_data=f"controls close {chat_id}"),
                 ]
             ]
         )
@@ -181,31 +172,31 @@ class Inline:
     def start_key(
         self, lang: dict, private: bool = False
     ) -> types.InlineKeyboardMarkup:
+        # Layout copied from Mahi Music Clone screenshot:
+        # 1) full-width ADD ME
+        # 2) OWNER | CLONE
+        # 3) SUPPORT | SOURCE
+        # 4) full-width HELP AND COMMANDS
+        owner_url = f"tg://user?id={config.OWNER_ID}" if getattr(config, "OWNER_ID", 0) else config.SUPPORT_CHAT
         rows = [
             [
                 self.ikb(
-                    text=f"🌹 {lang['add_me']}",
+                    text="➕  ᴀᴅᴅ ᴍᴇ ᴛᴏ ʏᴏᴜʀ ɢʀᴏᴜᴘ",
                     url=f"https://t.me/{app.username}?startgroup=true",
                 )
             ],
             [
-                self.ikb(text=f"📚 {lang['help']}", callback_data="help"),
-                self.ikb(text="🌺 ᴛᴀɢ", callback_data="help_tag"),
+                self.ikb(text="👤  ᴏᴡɴᴇʀ", url=owner_url),
+                self.ikb(text="🧠  ᴄʟᴏɴᴇ", url=config.SUPPORT_CHANNEL),
             ],
             [
-                self.ikb(text=f"🆘 {lang['support']}", url=config.SUPPORT_CHAT),
-                self.ikb(text=f"📢 {lang['channel']}", url=config.SUPPORT_CHANNEL),
+                self.ikb(text="🆘  ꜱᴜᴘᴘᴏʀᴛ", url=config.SUPPORT_CHAT),
+                self.ikb(text="💻  ꜱᴏᴜʀᴄᴇ", url="https://github.com/Kartiknishad36/Musicbot"),
+            ],
+            [
+                self.ikb(text="📚  ʜᴇʟᴘ ᴀɴᴅ ᴄᴏᴍᴍᴀɴᴅꜱ", callback_data="help"),
             ],
         ]
-        if private:
-            rows += [
-                [
-                    self.ikb(
-                        text=f"💻 {lang.get('source', 'Source')}",
-                        url="https://github.com/Kartiknishad36/Musicbot",
-                    )
-                ]
-            ]
         return self.ikm(rows)
 
     def yt_key(self, link: str) -> types.InlineKeyboardMarkup:
@@ -219,7 +210,6 @@ class Inline:
         )
 
     def tag_markup(self, chat_id: int) -> types.InlineKeyboardMarkup:
-        """Premium colored buttons for tag controls."""
         return self.ikm([
             [
                 self.ikb(text="🔴 Stop", callback_data=f"tag_stop {chat_id}"),
