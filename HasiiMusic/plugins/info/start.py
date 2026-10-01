@@ -1,8 +1,9 @@
-# ==============================================================================
-# start.py - Basics
-# ==============================================================================
+# ============================================================================== 
+# start.py - Basics (Premium Edition)
+# ============================================================================== 
 # Essential user-facing commands: /start, /help, /settings, etc.
-# ==============================================================================
+# Full premium design with colorful emojis, flowers and detailed captions.
+# ============================================================================== 
 
 from pyrogram import enums, filters, types
 
@@ -19,16 +20,27 @@ async def _help(_, m: types.Message):
     except Exception:
         pass
     
+    help_text = (
+        f"🌹 <b>✨ ᴛᴀɴᴜ ᴍᴜꜱɪᴄ ᴘʀᴇᴍɪᴜᴍ ᴇᴅɪᴛɪᴏɴ ✨</b> 🌹\n\n"
+        f"🌺 Choose a category below to explore commands:\n"
+        f"• 🔴 <b>Admins</b> — Manage your group\n"
+        f"• 🟢 <b>Auth</b> — Authorized users\n"
+        f"• 🟡 <b>Broadcast</b> — Message all chats\n"
+        f"• 🔵 <b>Loop / Play / Queue</b> — Playback control\n"
+        f"• 🟠 <b>Blacklist</b> — Block chats or users\n"
+        f"• 🟣 <b>Stats / Sudo / Ping</b> — Bot info\n"
+        f"• 🌺 <b>Tag</b> — Tag all members, spam, bomb & more\n\n"
+        f"🌸 Tap any button to see detailed help."
+    )
     try:
         await m.reply_photo(
-            photo=config.START_IMG,  # Use same image as start command
-            caption=m.lang["help_menu"],
+            photo=config.START_IMG,
+            caption=help_text,
             reply_markup=buttons.help_markup(m.lang),
         )
     except Exception:
-        # Fallback to text if photo fails
         await m.reply_text(
-            text=m.lang["help_menu"],
+            text=help_text,
             reply_markup=buttons.help_markup(m.lang),
         )
 
@@ -58,12 +70,24 @@ async def start(_, message: types.Message):
     # Determine if chat is private or group
     private = message.chat.type == enums.ChatType.PRIVATE
 
-    # Choose appropriate welcome message
-    _text = (
-        message.lang["start_pm"].format(message.from_user.first_name, app.name)
-        if private
-        else message.lang["start_gp"].format(app.name)
-    )
+    if private:
+        _text = (
+            f"🌹 <b>✨ ᴡᴇʟᴄᴏᴍᴇ ᴛᴏ ᴛᴀɴᴜ ᴍᴜꜱɪᴄ ✨</b> 🌹\n\n"
+            f"🌸 Hey <b>{message.from_user.first_name}</b>!\n"
+            f"I’m <b>{app.name}</b> — your premium high-quality music bot.\n\n"
+            f"🎵 Play songs from YouTube, Spotify, Telegram & more\n"
+            f"🎯 Crystal clear audio + video streaming\n"
+            f"🌺 Powerful tag, admin & utility tools\n"
+            f"💎 Beautiful colorful controls & design\n\n"
+            f"👉 Add me to your group and start the party!"
+        )
+    else:
+        _text = (
+            f"🌹 <b>✨ ᴛᴀɴᴜ ᴍᴜꜱɪᴄ ɪꜱ ᴀᴄᴛɪᴠᴇ ✨</b> 🌹\n\n"
+            f"🌸 Thanks for adding me here!\n"
+            f"Use <b>/play</b> to start music instantly.\n"
+            f"Type <b>/help</b> to see all premium features."
+        )
 
     key = buttons.start_key(message.lang, private)
     try:
@@ -73,7 +97,6 @@ async def start(_, message: types.Message):
             reply_markup=key,
         )
     except Exception:
-        # If the welcome photo cannot be sent, send the text menu instead.
         await message.reply_text(
             text=_text,
             reply_markup=key,
@@ -100,9 +123,15 @@ async def settings(_, message: types.Message):
     
     admin_only = await db.get_play_mode(message.chat.id)  # Get play mode setting
     _language = "en"
+    settings_text = (
+        f"🎯 <b>✨ ᴛᴀɴᴜ ᴍᴜꜱɪᴄ ᴛᴇᴛᴛɪɴɢꜱ ✨</b>\n\n"
+        f"🌹 Group: <b>{message.chat.title}</b>\n"
+        f"🔑 Play Mode: <b>{'Admins Only' if admin_only else 'Everyone'}</b>\n\n"
+        f"Tap the buttons below to change settings."
+    )
     await utils.safe_text(
         message,
-        message.lang["start_settings"].format(message.chat.title),
+        settings_text,
         reply_markup=buttons.settings_markup(
             message.lang, admin_only, _language, message.chat.id
         ),
